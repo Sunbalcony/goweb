@@ -82,6 +82,16 @@ func (ctx *Context) Value(key interface{}) interface{} {
 
 }
 
+
+
+func (ctx *Context) QueryAll() map[string][]string {
+	if ctx.request != nil {
+		return map[string][]string(ctx.request.URL.Query())
+	}
+	return map[string][]string{}
+
+}
+
 func (ctx *Context) QueryArray(key string, def []string) []string {
 	params := ctx.QueryAll()
 	if values, ok := params[key]; ok {
@@ -91,10 +101,16 @@ func (ctx *Context) QueryArray(key string, def []string) []string {
 
 }
 
-func (ctx *Context) QueryAll() map[string][]string {
-	if ctx.request != nil {
-		return map[string][]string(ctx.request.URL.Query())
+func (ctx *Context) QueryString(key string,def []string) []string {
+	params:=ctx.QueryAll()
+	if vals, ok := params[key]; ok {
+		len := len(vals)
+		if len > 0 {
+			return vals[len-1]
+		}
 	}
-	return map[string][]string{}
+	return def
+
 
 }
+
