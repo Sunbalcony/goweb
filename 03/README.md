@@ -95,3 +95,13 @@ func registerRouter(core *framework.Core) {
   }  
 }
 ```
+
+# 实现 HTTP 方法和静态路由匹配
+
+由于有两个待匹配的规则，Request-URI 和 Method，所以自然联想到可以使用两级哈希表来创建映射
+
+![img_3.png](img_3.png)
+
+第一级 hash 是请求 Method，第二级 hash 是 Request-URI
+
+我们按框架使用者使用路由的顺序分成四步来完善这个结构：定义路由 map、注册路由、匹配路由、填充 ServeHTTP 方法
