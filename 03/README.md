@@ -72,3 +72,26 @@ HTTP-Version 是 HTTP 的协议版本，目前常见的有 1.0、1.1、2.0
 这个需求是针对需求 2 改进的，因为 URL 中某个字段或者某些字段并不是固定的，是按照一定规则（比如是数字）变化的。那么，我们希望路由也能够支持这个规则，将这个动态变化的路由 URL 匹配出来。所以我们需要，使用自己定义的路由来补充，只支持静态匹配的 DefaultServerMux 默认路由
 
 ![img_2.png](img_2.png)
+
+
+####最终要实现的规则样式
+```golang
+
+package route
+// 注册路由规则
+func registerRouter(core *framework.Core) {
+    // 需求1+2:HTTP方法+静态路由匹配
+  core.Post("/user/login", UserLoginController)
+    
+    // 需求3:批量通用前缀
+    subjectApi := core.Group("/subject")
+  {
+    subjectApi.Post("/add", SubjectAddController)
+        // 需求4:动态路由
+    subjectApi.Delete("/:id", SubjectDelController)
+    subjectApi.Put("/:id", SubjectUpdateController)
+    subjectApi.Get("/:id", SubjectGetController)
+        subjectApi.Get("/list/all", SubjectListController)
+  }  
+}
+```
