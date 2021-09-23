@@ -55,7 +55,29 @@ func (c *Core) Delete(url string, handler ControllerHandler) {
 	upperUrl := strings.ToUpper(url)
 	c.router["DELETE"][upperUrl] = handler
 }
+
 //`````````````````路由注册end```````````````````````````````
+
+//路由匹配,如果没有匹配到则返回nil
+
+func (c *Core) FindRouteByRequest(r *http.Request) ControllerHandler {
+	//uri和method全部转换为大写，保证大小写不敏感
+	uri := r.URL.Path
+	method := r.Method
+	upperMethod := strings.ToUpper(method)
+	upperUri := strings.ToUpper(uri)
+
+	//匹配路由map
+	//查找第一层
+	if methodHandlers,ok:=c.router[upperMethod];ok{
+		//查找第二层map
+		if handler,ok:=methodHandlers[upperUri];ok{
+			return handler
+		}
+	}
+	return nil
+
+}
 
 func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("core serveHTTP")
